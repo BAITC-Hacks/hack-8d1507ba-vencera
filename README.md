@@ -4,7 +4,7 @@ Working, responsive contractor-matching MVP for Kazakhstan. The browser bundles 
 
 ## Run
 
-Requires Node.js 20.19+ or 22.12+.
+The Vite frontend needs Node.js 20.19+ or 22.12+. The shared Node API and `npm test` need Node.js 24 because they import the TypeScript matcher directly.
 
 ```bash
 npm install
