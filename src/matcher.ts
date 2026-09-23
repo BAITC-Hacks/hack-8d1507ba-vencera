@@ -1,4 +1,4 @@
-import rawProfiles from './data/contractors.json';
+import rawProfiles from './data/contractors.json' with { type: 'json' };
 import type { Contractor, Diagnostics, MatchQuery, MatchResponse, Relaxation, TraceStep } from './types';
 
 type Profile = {
@@ -14,7 +14,7 @@ const LAST_DATE = '2026-12-31';
 const SCORING_VERSION = 'csv-v1';
 const norm = (value: string) => value.trim().toLocaleLowerCase('ru-RU');
 const has = (values: string[], desired: string) => values.some((value) => norm(value) === norm(desired));
-const isoDate = (value: string) => /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(`${value}T00:00:00Z`));
+const isoDate = (value: string) => /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(`${value}T00:00:00Z`)) && new Date(`${value}T00:00:00Z`).toISOString().slice(0, 10) === value;
 const formatMoney = (value: number) => `${new Intl.NumberFormat('ru-RU').format(value)} ₸`;
 const tokens = (value: string) => [...new Set(norm(value).split(/[^\p{L}\p{N}]+/u).filter((word) => word.length >= 4).map((word) => word.slice(0, 4)))];
 
@@ -84,7 +84,7 @@ function budgetAlternative(query: MatchQuery, pool: Profile[]): number | null {
 function traceStep(key: string, label: string, count: number): TraceStep { return { key, label, count }; }
 
 export function matchLocal(query: MatchQuery): MatchResponse {
-  if (!query.city || !query.category || !query.event_type || !isoDate(query.date) || !Number.isFinite(query.budget) || query.budget <= 0) {
+  if (!query.city || !query.category || !query.event_type || !isoDate(query.date) || !Number.isInteger(query.budget) || query.budget <= 0 || (query.duration !== undefined && (!Number.isInteger(query.duration) || query.duration < 1 || query.duration > 24))) {
     throw new Error('Проверьте город, дату, формат, категорию и бюджет.');
   }
   const city = profiles.filter((profile) => norm(profile.city) === norm(query.city));

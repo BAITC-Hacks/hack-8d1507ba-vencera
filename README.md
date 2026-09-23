@@ -1,6 +1,6 @@
 # Vencera AI — HackAlem MVP
 
-Working, responsive contractor-matching MVP for Kazakhstan. It runs entirely in the browser against the official anonymized 66-profile CSV, so there is no backend dependency during the hackathon demo.
+Working, responsive contractor-matching MVP for Kazakhstan. The browser bundles the official anonymized 66-profile CSV for a reliable offline demo. A small optional Node API serves the same matcher.
 
 ## Run
 
@@ -11,7 +11,9 @@ npm install
 npm run dev
 ```
 
-Open the URL printed by Vite. Run `npm run build` for the production check. `Vencera-AI-demo.html` is a standalone, directly openable build for sharing; regenerate it after changes with `npm run build` then `node scripts/create-standalone.mjs`.
+Open the URL printed by Vite. Run `npm test` for the CSV/acceptance checks and `npm run build` for the production check. `Vencera-AI-demo.html` is a standalone, directly openable build for sharing; regenerate it after changes with `npm run build` then `node scripts/create-standalone.mjs`.
+
+With Node.js 24, `npm run build && npm run serve` starts the production static server and `POST /api/match` on `http://127.0.0.1:4173`. The endpoint accepts the PDF's `budget_kzt`, `duration_hours`, `must_keep`, and `preferences` fields, and returns status, up to three cards, structured/source-text evidence, diagnostics, decision trace, and scoring version. The UI calls the same matcher locally so the standalone HTML also works without the server.
 
 ## Data and import
 
@@ -46,11 +48,12 @@ Change a fixed condition and submit to verify that it is not relaxed. Select a d
 ## Architecture and limits
 
 - `src/App.tsx`: search, validation, result/empty/unverified states, evidence cards, Decision Trace.
-- `src/matcher.ts`: deterministic filtering, ranking, diagnostics, permitted alternatives.
+- `src/matcher.ts`: deterministic filtering, ranking, diagnostics, permitted alternatives, shared with the optional API.
+- `server.mjs`: production static server and `POST /api/match` adapter.
 - `src/demo.ts`: real CSV demo queries, not fake profiles.
 - `src/types.ts`: interface contract.
 - `src/styles.css`: responsive design.
 
-This hackathon build is client-side: it does not expose a hosted `/api/match` endpoint or persist user data. The PDF's portfolio-media phase is intentionally not implemented: the CSV has no rights-cleared project photos or videos, and `description` is not a portfolio. Booking, payments, accounts, notifications, face/emotion/age inference, and ratings are also outside MVP scope. Before a public portfolio launch, confirm consent, image rights, Kazakh data residency, retention/deletion, moderation, and applicable law with qualified counsel.
+This hackathon build does not persist user data, and its optional API is not a hardened public deployment. The PDF's portfolio-media phase is intentionally not implemented: the CSV has no rights-cleared project photos or videos, and `description` is not a portfolio. Booking, payments, accounts, notifications, face/emotion/age inference, and ratings are also outside MVP scope. Before a public portfolio launch, confirm consent, image rights, Kazakh data residency, retention/deletion, moderation, and applicable law with qualified counsel.
 
 The [Figma handoff](https://www.figma.com/design/CZg4hdmY8aqptG3db2L2CZ) reflects the earlier UI baseline. The code is the current source of truth for the CSV-powered MVP.
