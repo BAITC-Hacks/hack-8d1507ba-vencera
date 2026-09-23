@@ -13,7 +13,11 @@ if (!scriptMatch || !styleMatch) {
 
 const asset = (path) => resolve(root, 'dist', path.replace(/^\//, ''));
 const js = (await readFile(asset(scriptMatch[1]), 'utf8')).replace(/<\/script/gi, '<\\/script');
-const css = (await readFile(asset(styleMatch[1]), 'utf8')).replace(/<\/style/gi, '<\\/style');
+let css = await readFile(asset(styleMatch[1]), 'utf8');
+const heroImage = await readFile(resolve(root, 'public/images/vencera-editorial-hero.png'));
+css = css.replace(/url\((['"]?)\/images\/vencera-editorial-hero\.png\1\)/g, `url("data:image/png;base64,${heroImage.toString('base64')}")`);
+if (!css.includes('data:image/png;base64,')) throw new Error('Hero image could not be embedded in the standalone HTML.');
+css = css.replace(/<\/style/gi, '<\\/style');
 
 html = html.replace(scriptMatch[0], () => `<script type="module">\n${js}\n</script>`);
 html = html.replace(styleMatch[0], () => `<style>\n${css}\n</style>`);

@@ -33,26 +33,31 @@ Eligible profiles are ranked deterministically by a versioned (`csv-v1`) overlap
 
 Prices are explicitly **starting prices**, not a final quote. Source descriptions are self-reported claims. There are no fabricated ratings, reviews, guarantees, or availability outside the dataset.
 
-## Demo checks
+## Experience
 
-Use the on-screen scenario buttons or query parameters:
+The landing page uses a black-and-white editorial system, Cormorant Garamond display typography, restrained motion, and an original AI-generated campaign image at `public/images/vencera-editorial-hero.png`. The concierge guides the user through event, city, category, date, budget, language importance, duration, and a free-text preference, then runs the same CSV-backed matcher. Animated workflow steps, result trace, category index, mobile navigation, and reduced-motion support are included.
 
-- `?demo=popular`: five eligible wedding hosts in Almaty at 8 hours; top three shown.
-- `?demo=duration`: same criteria at 10 hours; three eligible. The sensitivity note explains the change.
-- `?demo=rare`: ceremony-host category; two actual matches, including synthetic-source marking where relevant.
-- `?demo=rescue`: Astana florist busy on 24 September; no booked profile shown; 25 September proposed only because the date is flexible.
-- `?demo=missing`: no instrumentalist category in Astana.
+## Scenario walkthroughs
 
-Change a fixed condition and submit to verify that it is not relaxed. Select a date outside the calendar to see the unverified-availability state.
+Use the concierge and choose the following inputs:
+
+- Wedding, Almaty, host, 30 September 2026, 1,000,000 ₸, Russian required, 8 hours: five eligible, up to three shown.
+- Same conditions at 10 hours: three eligible profiles.
+- Wedding ceremony host, Almaty, 24 September 2026, 300,000 ₸, Russian required, 3 hours: two real matches.
+- Florist, Astana, 24 September 2026, 300,000 ₸, date flexible: no available profile that day; 25 September is suggested.
+- Instrumentalist, Astana: category-missing state.
+
+Choose the same city/category/date with date fixed in the florist case to confirm that no alternative date is suggested. Choose a date outside the calendar to see the unverified-availability state.
 
 ## Architecture and limits
 
-- `src/App.tsx`: search, validation, result/empty/unverified states, evidence cards, Decision Trace.
+- `src/App.tsx`: editorial landing page, animated concierge chat, results, Decision Trace, process and category sections.
 - `src/matcher.ts`: deterministic filtering, ranking, diagnostics, permitted alternatives, shared with the optional API.
 - `server.mjs`: production static server and `POST /api/match` adapter.
 - `src/demo.ts`: real CSV demo queries, not fake profiles.
 - `src/types.ts`: interface contract.
 - `src/styles.css`: responsive design.
+- `public/images/vencera-editorial-hero.png`: original campaign visual.
 
 This hackathon build does not persist user data, and its optional API is not a hardened public deployment. The PDF's portfolio-media phase is intentionally not implemented: the CSV has no rights-cleared project photos or videos, and `description` is not a portfolio. Booking, payments, accounts, notifications, face/emotion/age inference, and ratings are also outside MVP scope. Before a public portfolio launch, confirm consent, image rights, Kazakh data residency, retention/deletion, moderation, and applicable law with qualified counsel.
 
